@@ -436,20 +436,25 @@ class HotelFolioLine(models.Model):
 
     def _get_display_price(self, product):
         # TO DO: move me in master/saas-16 on sale.order
-        if self.folio_id.pricelist_id.discount_policy == "with_discount":
-            return product.with_context(pricelist=self.folio_id.pricelist_id.id).price
+        # if self.folio_id.pricelist_id.discount_policy == "with_discount":
+        #     return product.with_context(pricelist=self.folio_id.pricelist_id.id).price
         product_context = dict(
             self.env.context,
             partner_id=self.folio_id.partner_id.id,
             date=self.folio_id.date_order,
             uom=self.product_uom.id,
         )
+        # TODO: _get_product_price_rule has changed.
+        # 15.0: def get_product_price_rule(self, product, quantity, partner, date=False, uom_id=False):
+        # 16.0: def _get_product_price_rule(self, product, quantity, uom=None, date=False, **kwargs):
         final_price, rule_id = self.folio_id.pricelist_id.with_context(
             **product_context
-        ).get_product_price_rule(
+        )._get_product_price_rule(
             self.product_id,
             self.product_uom_qty or 1.0,
-            self.folio_id.partner_id,
+            # None,
+            # False,
+            # self.folio_id.partner_id,
         )
         base_price, currency_id = self.with_context(
             **product_context
@@ -475,7 +480,7 @@ class HotelFolioLine(models.Model):
             line = line.with_company(line.company_id)
             fpos = (
                 line.order_id.fiscal_position_id
-                or line.order_id.fiscal_position_id.get_fiscal_position(
+                or line.order_id.fiscal_position_id._get_fiscal_position(
                     line.order_partner_id.id
                 )
             )
@@ -516,11 +521,12 @@ class HotelFolioLine(models.Model):
             uom=self.product_uom.id,
         )
 
-        vals.update(
-            name=self.order_line_id.get_sale_order_line_multiline_description_sale(
-                product
-            )
-        )
+        # vals.update(
+        #     name=self.order_line_id.get_sale_order_line_multiline_description_sale(
+        #         product
+        #     )
+        # )
+        # _get_sale_order_line_multiline_description_sale() cannot take any argument.
 
         self._compute_tax_id()
 
@@ -710,8 +716,8 @@ class HotelServiceLine(models.Model):
 
     def _get_display_price(self, product):
         # TO DO: move me in master/saas-16 on sale.order
-        if self.folio_id.pricelist_id.discount_policy == "with_discount":
-            return product.with_context(pricelist=self.folio_id.pricelist_id.id).price
+        # if self.folio_id.pricelist_id.discount_policy == "with_discount":
+        #     return product.with_context(pricelist=self.folio_id.pricelist_id.id).price
         product_context = dict(
             self.env.context,
             partner_id=self.folio_id.partner_id.id,
@@ -720,10 +726,10 @@ class HotelServiceLine(models.Model):
         )
         final_price, rule_id = self.folio_id.pricelist_id.with_context(
             **product_context
-        ).get_product_price_rule(
+        )._get_product_price_rule(
             self.product_id,
             self.product_uom_qty or 1.0,
-            self.folio_id.partner_id,
+            # self.folio_id.partner_id,
         )
         base_price, currency_id = self.with_context(
             **product_context
@@ -775,11 +781,11 @@ class HotelServiceLine(models.Model):
             uom=self.product_uom.id,
         )
 
-        vals.update(
-            name=self.service_line_id.get_sale_order_line_multiline_description_sale(
-                product
-            )
-        )
+        # vals.update(
+        #     name=self.service_line_id.get_sale_order_line_multiline_description_sale(
+        #         product
+        #     )
+        # )
 
         self._compute_tax_id()
 

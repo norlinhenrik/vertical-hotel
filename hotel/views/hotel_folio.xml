@@ -119,7 +119,7 @@
                                         name="product_id"
                                         string="Room No"
                                         required="1"
-                                        context="{'partner_id':parent.partner_id,'quantity':product_uom_qty,'pricelist':parent.pricelist_id,'uom':product_uom, 'checkin_date':checkin_date, 'checkout_date':checkout_date}"
+                                        context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'checkin_date':checkin_date, 'checkout_date':checkout_date}"
                                         domain="[('isroom','=',True)]"
                                         options="{'no_open': True}"
                                     />
@@ -178,7 +178,7 @@
                                         name="product_id"
                                         required="1"
                                         domain="[('isservice','=',True)]"
-                                        context="{'partner_id':parent.partner_id,'quantity':product_uom_qty,'pricelist':parent.pricelist_id,'hotel':parent.warehouse_id,'uom':product_uom}"
+                                        context="{'partner_id':parent.partner_id,'quantity':product_uom_qty,'pricelist':parent.pricelist_id,'hotel':parent.warehouse_id}"
                                         options="{'no_open': True}"
                                     />
                                     <field name="ser_checkout_date" invisible="1" />
